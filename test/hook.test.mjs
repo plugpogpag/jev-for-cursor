@@ -57,6 +57,30 @@ test("readonly shell is allowed without an API key", async () => {
   assert.deepEqual(JSON.parse(result.stdout), { permission: "allow" });
 });
 
+test("a passing test command does not call Jev", async () => {
+  const result = await runHook({
+    hook_event_name: "postToolUse",
+    tool_name: "Shell",
+    tool_input: { command: "npm test" },
+    tool_output: JSON.stringify({ exitCode: 0, stdout: "ok" }),
+    workspace_roots: ["/tmp"],
+  });
+  assert.equal(result.code, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), {});
+});
+
+test("a short search does not call Jev", async () => {
+  const result = await runHook({
+    hook_event_name: "postToolUse",
+    tool_name: "Grep",
+    tool_input: { pattern: "login" },
+    tool_output: "src/auth/login.ts\n  10:login\n",
+    workspace_roots: ["/tmp"],
+  });
+  assert.equal(result.code, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), {});
+});
+
 test("session start injects the decision protocol", async () => {
   const result = await runHook({ hook_event_name: "sessionStart" });
   assert.equal(result.code, 0, result.stderr);

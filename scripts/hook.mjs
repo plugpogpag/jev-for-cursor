@@ -13,6 +13,15 @@ import {
   workspaceRoot,
 } from "../src/decide.mjs";
 import { actionQuestions, isMutatingTool, judgeAction, toolSummary } from "../src/gate.mjs";
+import {
+  extractCandidatePaths,
+  pickShortlist,
+  relevanceQuestions,
+  renderShortlist,
+  searchQuery,
+  shouldShortlist,
+} from "../src/shortlist.mjs";
+import { classifyFailure, failureQuestions, isFailedTest, renderFailure } from "../src/failure-triage.mjs";
 
 async function readStdin() {
   const chunks = [];
@@ -116,9 +125,73 @@ async function onTool(input) {
   }
 }
 
+async function onTestFailure(input) {
+  const failed = isFailedTest(input.tool_input?.command, input.tool_output);
+  if (!failed) {
+    emit({});
+    return;
+  }
+  const root = workspaceRoot(input);
+  const policy = await readProjectPolicy(root);
+  try {
+    const result = await client().systemOne({
+      model: policy.model,
+      state: { command: failed.command, log: failed.log },
+      questions: failureQuestions(),
+    });
+    const classification = classifyFailure(result.answers?.failure_kind, policy.thresholds.testFailureConfidence);
+    emit({ additional_context: renderFailure(classification) });
+  } catch (error) {
+    if (policy.failClosed) {
+      emit({ additional_context: `Jev could not classify this test failure: ${error.message}` });
+      return;
+    }
+    emit({});
+  }
+}
+
+async function onAfterTool(input) {
+  if (input.tool_name === "Shell") {
+    await onTestFailure(input);
+    return;
+  }
+  await onSearch(input);
+}
+
+async function onSearch(input) {
+  const paths = extractCandidatePaths(input.tool_output);
+  if (!shouldShortlist(paths)) {
+    emit({});
+    return;
+  }
+  const root = workspaceRoot(input);
+  const policy = await readProjectPolicy(root);
+  const decision = await readDecision(root);
+  const query = searchQuery(input.tool_input);
+  try {
+    const result = await client().systemOne({
+      model: policy.model,
+      state: {
+        request: decision?.prompt || query || "the current coding task",
+        search_query: query,
+      },
+      questions: relevanceQuestions(paths),
+    });
+    const items = pickShortlist(paths, result.answers, policy.thresholds.shortlistMin);
+    emit({ additional_context: renderShortlist(items, query) });
+  } catch (error) {
+    if (policy.failClosed) {
+      emit({ additional_context: `Jev could not shortlist these search results: ${error.message}` });
+      return;
+    }
+    emit({});
+  }
+}
+
 const input = await readStdin();
 const event = input.hook_event_name;
 if (event === "sessionStart") await onSession();
 else if (event === "beforeSubmitPrompt") await onPrompt(input);
 else if (event === "preToolUse") await onTool(input);
+else if (event === "postToolUse") await onAfterTool(input);
 else emit({});

@@ -14,3 +14,5 @@ At the start of a turn, read `.cursor/jev/latest.json` in the workspace when it 
 - `route: refuse` means stop and explain the boundary briefly.
 
 Do not invent probabilities or override a recorded route. Project policy lives in `.cursor/jev.json`.
+
+When a tool result includes a Jev search shortlist, read those files first. When it includes a Jev test-failure note, follow that classification. If the note says the failure is not separable, inspect the log before choosing a fix.

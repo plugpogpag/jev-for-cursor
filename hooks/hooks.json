@@ -19,6 +19,13 @@
         "timeout": 20,
         "matcher": "Shell|Write|Delete|StrReplace|EditNotebook|Task"
       }
+    ],
+    "postToolUse": [
+      {
+        "command": "node ./scripts/hook.mjs",
+        "timeout": 20,
+        "matcher": "Grep|Glob|SemanticSearch|Shell"
+      }
     ]
   }
 }

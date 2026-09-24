@@ -17,6 +17,8 @@ export const DEFAULT_THRESHOLDS = {
   blockDestructive: 0.7,
   violatesRoute: 0.6,
   blockMisaligned: 0.35,
+  shortlistMin: 0.35,
+  testFailureConfidence: 0.45,
 };
 
 const READONLY_SHELL =

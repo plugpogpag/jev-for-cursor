@@ -1,0 +1,14 @@
+{
+  "name": "jev-decision-layer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cursor plugin that uses TypeSafe Jev as the decision layer for the AI agent.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

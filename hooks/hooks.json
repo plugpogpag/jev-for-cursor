@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node ./scripts/hook.mjs",
+        "timeout": 10
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "node ./scripts/hook.mjs",
+        "timeout": 20
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node ./scripts/hook.mjs",
+        "timeout": 20,
+        "matcher": "Shell|Write|Delete|StrReplace|EditNotebook|Task"
+      }
+    ]
+  }
+}

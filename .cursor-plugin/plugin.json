@@ -1,0 +1,25 @@
+{
+  "name": "jev-decision-layer",
+  "displayName": "Jev for Cursor",
+  "version": "0.1.0",
+  "description": "Cursor plugin that uses TypeSafe Jev to route each agent turn and gate file edits and state-changing commands.",
+  "author": {
+    "name": "krittapoj.lert"
+  },
+  "license": "MIT",
+  "keywords": ["jev", "typesafe", "decision", "agent", "hooks"],
+  "skills": "./skills/",
+  "rules": "./rules/",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./mcp.json",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "TYPESAFE_API_KEY": {
+        "type": "string",
+        "title": "TypeSafe API key",
+        "description": "Bearer token for https://api.typesafe.ai. Also read from the TYPESAFE_API_KEY environment variable."
+      }
+    }
+  }
+}

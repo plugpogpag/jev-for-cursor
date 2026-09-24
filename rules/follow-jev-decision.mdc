@@ -1,0 +1,16 @@
+---
+description: Follow the Jev decision recorded for the current agent turn
+alwaysApply: true
+---
+
+Jev is the decision layer. The generative model still writes and explains. Jev chooses the route.
+
+At the start of a turn, read `.cursor/jev/latest.json` in the workspace when it exists.
+
+- `status: skipped` or a missing file means no decision was made. Continue with the user request.
+- `route: explain` or `route: review` means answer only. Do not edit files or run state-changing commands.
+- `route: plan` means propose the approach and wait for confirmation before editing.
+- `route: implement` means edits and commands are allowed when they serve the request.
+- `route: refuse` means stop and explain the boundary briefly.
+
+Do not invent probabilities or override a recorded route. Project policy lives in `.cursor/jev.json`.

@@ -1,0 +1,4 @@
+node_modules/
+.cursor/jev/latest.json
+*.log
+.DS_Store

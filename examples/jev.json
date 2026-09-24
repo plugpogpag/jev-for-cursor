@@ -1,0 +1,20 @@
+{
+  "model": "jev-latest",
+  "failClosed": false,
+  "notes": "This project prefers small patches. Do not deploy, force-push, or edit lockfiles unless the user asks.",
+  "thresholds": {
+    "refuseProbability": 0.55,
+    "refuseConfidence": 0.4,
+    "outOfScope": 0.8,
+    "blockDestructive": 0.7,
+    "violatesRoute": 0.6,
+    "blockMisaligned": 0.35
+  },
+  "routes": {
+    "implement": "The user wants files, configuration, or behavior changed.",
+    "explain": "The user wants an answer or walkthrough and did not ask for edits.",
+    "review": "The user wants findings or a critique and did not ask to apply fixes.",
+    "plan": "The user wants an approach before any edits.",
+    "refuse": "The user wants credential theft, unauthorized access, sabotage, or to bypass written project policy."
+  }
+}
